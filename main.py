@@ -4,7 +4,9 @@ from bs4 import BeautifulSoup
 from nltk.corpus import stopwords
 import re
 
-res = requests.get("https://en.wikipedia.org/wiki/Hand_scraper")
+url = input("Enter the Wiki url: ")
+
+res = requests.get(url)
 
 wiki_text = BeautifulSoup(res.text, "html.parser")
 
