@@ -2,8 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-# url = input("Enter the Wiki url: ")
-
 
 def text_scrap(url):
     res = requests.get(url)
@@ -22,4 +20,3 @@ def text_scrap(url):
     text = text.replace("[", "(")
     text = text.replace("]", ")")
     return text
-

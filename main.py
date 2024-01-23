@@ -1,5 +1,3 @@
-# for the streamlit
-
 import streamlit as st
 from scrap_wiki import text_scrap
 
