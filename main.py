@@ -1,6 +1,6 @@
 import streamlit as sl
 import wikipedia as wk
-
+import requests
 
 with sl.form("Wiki Search"):
     url = sl.text_input("Enter the Wikipedia page URL")
@@ -58,6 +58,16 @@ if submit_btn:
                 width=200,
                 use_column_width="always",
             )
+
+            # Add a download button below each image
+            response = requests.get(img_list[i])
+            sl.download_button(
+                label="Download",
+                data=response.content,
+                file_name=f"{img_list[i].split("/")[-1].split(".")[0]}.png",
+                key=f"download_image_{i+1}",
+            )
+            sl.markdown("""-----""")
     elif val == "Refrences":
         sl.write("## Wikipedia refrences:")
         sl.write("##")
@@ -83,8 +93,18 @@ if submit_btn:
                 width=200,
                 use_column_width="always",
             )
+
+            # Add a download button below each image
+            response = requests.get(img_list[i])
+            sl.download_button(
+                label="Download",
+                data=response.content,
+                file_name=f"{img_list[i].split("/")[-1].split(".")[0]}.png",
+                key=f"download_image_{i+1}",
+            )
         sl.write("##")
         sl.write("## Wikipedia refrences:")
         sl.write("##")
         for i, refs in enumerate(wiki_refrences(url), 1):
             sl.write(i, " - ", refs)
+
