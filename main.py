@@ -31,6 +31,7 @@ def wiki_images(url):
     img_urls = imgs.images
     return img_urls
 
+
 def wiki_refrences(url):
     refs = wk.page(url)
     ref_urls = refs.references
@@ -63,7 +64,5 @@ if images_submit_btn:
 if refrences_submit_btn:
     sl.write("## Wikipedia refrences:")
     sl.write("##")
-    i = 1
-    for refs in wiki_refrences(url):
-        sl.write(i," - ", refs)
-        i = i + 1
+    for i, refs in enumerate(wiki_refrences(url), 1):
+        sl.write(i, " - ", refs)
