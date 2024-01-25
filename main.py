@@ -1,12 +1,22 @@
 import streamlit as sl
 import wikipedia as wk
 from time import time
+from collections import Counter
+import matplotlib.pyplot as plt
 
 with sl.form("Wiki Search"):
     url = sl.text_input("Enter the Wikipedia page URL")
     url = url.split("/")[-1]
     val = sl.selectbox(
-        "Search for", options=["Content", "Summary", "Images", "Refrences", "All data"]
+        "Search for",
+        options=[
+            "Content",
+            "Summary",
+            "Images",
+            "Refrences",
+            "Top 10 Most Frequent Words",
+            "All data",
+        ],
     )
     submit_btn = sl.form_submit_button("Search")
 
@@ -35,6 +45,14 @@ def wiki_refrences(url):
     refs = wk.page(url)
     ref_urls = refs.references
     return ref_urls
+
+
+def freq_words(text):
+    words = text.split()
+    word_counts = Counter(words)
+    top10 = word_counts.most_common(10)
+    top10 = sorted(top10, key=lambda x: x[0].lower())
+    return top10
 
 
 def time_taken():
@@ -76,6 +94,30 @@ if submit_btn:
         for i, refs in enumerate(wiki_refrences(url), 1):
             sl.write(i, " - ", refs)
         time_taken()
+    elif val == "Top 10 Most Frequent Words":
+        sl.write("## Word Frequency Analysis:")
+        sl.write("##")
+        text = wk.page(url).content
+        top10 = freq_words(text)
+        words, counts = zip(*top10)
+        fig, ax = plt.subplots(figsize=(10, 6))
+        bars = ax.bar(words, counts, color="skyblue")
+        for bar, count in zip(bars, counts):
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height(),
+                str(count),
+                ha="center",
+                va="bottom",
+            )
+        ax.set_title("Top 10 Most Frequent Words")
+        ax.set_xlabel("Words")
+        ax.set_ylabel("Count")
+        plt.xticks(rotation=45, ha="right")
+        plt.tight_layout()
+        sl.pyplot(fig)
+        sl.markdown("""-----""")
+        time_taken()
     else:
         sl.write("## Wikipedia Text:")
         sl.write("##")
@@ -101,4 +143,27 @@ if submit_btn:
         sl.write("##")
         for i, refs in enumerate(wiki_refrences(url), 1):
             sl.write(i, " - ", refs)
+        sl.write("##")
+        sl.write("## Word Frequency Analysis:")
+        sl.write("##")
+        text = wk.page(url).content
+        top10 = freq_words(text)
+        words, counts = zip(*top10)
+        fig, ax = plt.subplots(figsize=(10, 6))
+        bars = ax.bar(words, counts, color="skyblue")
+        for bar, count in zip(bars, counts):
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height(),
+                str(count),
+                ha="center",
+                va="bottom",
+            )
+        ax.set_title("Top 10 Most Frequent Words")
+        ax.set_xlabel("Words")
+        ax.set_ylabel("Count")
+        plt.xticks(rotation=45, ha="right")
+        plt.tight_layout()
+        sl.pyplot(fig)
+        sl.markdown("""-----""")
         time_taken()
