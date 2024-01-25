@@ -1,6 +1,5 @@
 import streamlit as st
 
-# Define quiz questions and answers
 questions = [
     {
         "question": "What is the capital of France?",
@@ -12,7 +11,6 @@ questions = [
         "options": ["Mars", "Jupiter", "Venus", "Saturn"],
         "correct_option": "Mars",
     },
-    # Add more questions as needed
 ]
 
 
@@ -46,9 +44,6 @@ with st.form(key="quiz_form"):
 if submit_button:
     st.write("## Results:")
     for question_num, answer_info in user_answers.items():
-        # st.write(
-        #     f"**{question_num}:** Option Marked - {answer_info['Option Marked']}, Correct Option - {answer_info['Correct Option']}, Status - {answer_info['Status']}"
-        # )
         st.write(f"### {question_num}:")
         st.write(f"**Option Marked** - {answer_info['Option Marked']}")
         st.write(f"**Correct Option** - {answer_info['Correct Option']}")
