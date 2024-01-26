@@ -4,6 +4,7 @@ from time import time
 from collections import Counter
 import matplotlib.pyplot as plt
 from textblob import TextBlob
+import pandas as pd
 
 with sl.form("Wiki Search"):
     url = sl.text_input("Enter the Wikipedia page URL")
@@ -61,16 +62,54 @@ def wiki_sentimental_analysis(url):
     text = wk.page(url).content
 
     blob = TextBlob(text)
-    sentiment = blob.sentiment.polarity
 
-    if sentiment > 0:
+    sentiment_polarity = blob.sentiment.polarity
+
+    if sentiment_polarity > 0:
         sentiment_label = "Positive"
-    elif sentiment < 0:
+        sentiment_words = [
+            {"word": word.lower(), "score": blob.sentiment.polarity, "frequency": count}
+            for word, count in Counter(
+                [
+                    word.lower()
+                    for word, score in blob.tags
+                    if score == "JJ" and blob.word_counts[word.lower()] > 1
+                ]
+            ).items()
+        ]
+    elif sentiment_polarity < 0:
         sentiment_label = "Negative"
+        sentiment_words = [
+            {"word": word.lower(), "score": blob.sentiment.polarity, "frequency": count}
+            for word, count in Counter(
+                [
+                    word.lower()
+                    for word, score in blob.tags
+                    if score == "JJ" and blob.word_counts[word.lower()] > 1
+                ]
+            ).items()
+        ]
     else:
         sentiment_label = "Neutral"
+        sentiment_words = [
+            {"word": word.lower(), "score": blob.sentiment.polarity, "frequency": count}
+            for word, count in Counter(
+                [
+                    word.lower()
+                    for word, score in blob.tags
+                    if score == "NN" and blob.word_counts[word.lower()] > 1
+                ]
+            ).items()
+        ]
 
-    return sentiment_label, sentiment
+    # Prepare the results
+    results = {
+        "sentiment_label": sentiment_label,
+        "sentiment_polarity": sentiment_polarity,
+        "sentiment_words": sentiment_words,
+    }
+
+    return results
 
 
 def time_taken():
@@ -139,7 +178,10 @@ if submit_btn:
     elif val == "Sentimental Analysis":
         sl.write("## Sentimental Analysis:")
         sl.write("##")
-        sentiment_label, sentiment_score = wiki_sentimental_analysis(url)
+        sentiment_results = wiki_sentimental_analysis(url)
+        sentiment_label = sentiment_results["sentiment_label"]
+        sentiment_score = round(sentiment_results["sentiment_polarity"], 3)
+        sentiment_df = pd.DataFrame(sentiment_results["sentiment_words"])
         sl.write(f"**Sentiment status:** {sentiment_label}")
         sl.write(f"**Sentiment value:** {sentiment_score}")
         sl.write("##")
@@ -152,14 +194,16 @@ if submit_btn:
             sl.image(
                 "sentimental_images\sad_face.png",
                 width=100,
-                use_column_width="always",
             )
         else:
             sl.image(
                 "sentimental_images\ordinary_face.png",
                 width=100,
-                use_column_width="always",
             )
+        sl.write("##")
+        sl.write(f"### Sentiment {sentiment_label} Words:")
+        sl.write("##")
+        sl.write(sentiment_df)
         time_taken()
     else:
         sl.write("## Wikipedia Text:")
@@ -209,4 +253,33 @@ if submit_btn:
         plt.tight_layout()
         sl.pyplot(fig)
         sl.markdown("""-----""")
+        sl.write("##")
+        sl.write("## Sentimental Analysis:")
+        sl.write("##")
+        sentiment_results = wiki_sentimental_analysis(url)
+        sentiment_label = sentiment_results["sentiment_label"]
+        sentiment_score = round(sentiment_results["sentiment_polarity"], 3)
+        sentiment_df = pd.DataFrame(sentiment_results["sentiment_words"])
+        sl.write(f"**Sentiment status:** {sentiment_label}")
+        sl.write(f"**Sentiment value:** {sentiment_score}")
+        sl.write("##")
+        if sentiment_label == "Positive":
+            sl.image(
+                "sentimental_images\happy_face.png",
+                width=200,
+            )
+        elif sentiment_label == "Negative":
+            sl.image(
+                "sentimental_images\sad_face.png",
+                width=100,
+            )
+        else:
+            sl.image(
+                "sentimental_images\ordinary_face.png",
+                width=100,
+            )
+        sl.write("##")
+        sl.write(f"### Sentiment {sentiment_label} Words:")
+        sl.write("##")
+        sl.write(sentiment_df)
         time_taken()
