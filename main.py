@@ -160,6 +160,7 @@ if submit_btn:
                 width=100,
                 use_column_width="always",
             )
+        time_taken()
     else:
         sl.write("## Wikipedia Text:")
         sl.write("##")
