@@ -187,23 +187,40 @@ if submit_btn:
         sl.write("##")
         if sentiment_label == "Positive":
             sl.image(
-                "sentimental_images\happy_face.png",
+                "happy_face.png",
                 width=200,
             )
         elif sentiment_label == "Negative":
             sl.image(
-                "sentimental_images\sad_face.png",
+                "sad_face.png",
                 width=100,
             )
         else:
             sl.image(
-                "sentimental_images\ordinary_face.png",
+                "ordinary_face.png",
                 width=100,
             )
         sl.write("##")
         sl.write(f"### Sentiment {sentiment_label} Words:")
         sl.write("##")
         sl.write(sentiment_df)
+        sl.write("##")
+        sl.write("### Word Frequency Chart:")
+        fig, ax = plt.subplots()
+        bars = ax.bar(sentiment_df["word"], sentiment_df["frequency"], color="skyblue")
+        for bar, count in zip(bars, sentiment_df["frequency"]):
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height(),
+                str(count),
+                ha="center",
+                va="bottom",
+            )
+        ax.set_xlabel("Words")
+        ax.set_ylabel("Frequency")
+        plt.xticks(rotation=45, ha="right")
+        plt.tight_layout()
+        sl.pyplot(fig)
         time_taken()
     else:
         sl.write("## Wikipedia Text:")
@@ -265,21 +282,38 @@ if submit_btn:
         sl.write("##")
         if sentiment_label == "Positive":
             sl.image(
-                "sentimental_images\happy_face.png",
+                "happy_face.png",
                 width=200,
             )
         elif sentiment_label == "Negative":
             sl.image(
-                "sentimental_images\sad_face.png",
+                "sad_face.png",
                 width=100,
             )
         else:
             sl.image(
-                "sentimental_images\ordinary_face.png",
+                "ordinary_face.png",
                 width=100,
             )
         sl.write("##")
         sl.write(f"### Sentiment {sentiment_label} Words:")
         sl.write("##")
         sl.write(sentiment_df)
+        sl.write("##")
+        sl.write("### Sentiment words frequency chart:")
+        fig, ax = plt.subplots()
+        bars = ax.bar(sentiment_df["word"], sentiment_df["frequency"], color="skyblue")
+        for bar, count in zip(bars, sentiment_df["frequency"]):
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height(),
+                str(count),
+                ha="center",
+                va="bottom",
+            )
+        ax.set_xlabel("Words")
+        ax.set_ylabel("Frequency")
+        plt.xticks(rotation=45, ha="right")
+        plt.tight_layout()
+        sl.pyplot(fig)
         time_taken()
