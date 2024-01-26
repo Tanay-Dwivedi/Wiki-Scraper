@@ -3,6 +3,7 @@ import wikipedia as wk
 from time import time
 from collections import Counter
 import matplotlib.pyplot as plt
+from textblob import TextBlob
 
 with sl.form("Wiki Search"):
     url = sl.text_input("Enter the Wikipedia page URL")
@@ -15,6 +16,7 @@ with sl.form("Wiki Search"):
             "Images",
             "Refrences",
             "Top 10 Most Frequent Words",
+            "Sentimental Analysis",
             "All data",
         ],
     )
@@ -53,6 +55,22 @@ def freq_words(text):
     top10 = word_counts.most_common(10)
     top10 = sorted(top10, key=lambda x: x[0].lower())
     return top10
+
+
+def wiki_sentimental_analysis(url):
+    text = wk.page(url).content
+
+    blob = TextBlob(text)
+    sentiment = blob.sentiment.polarity
+
+    if sentiment > 0:
+        sentiment_label = "Positive"
+    elif sentiment < 0:
+        sentiment_label = "Negative"
+    else:
+        sentiment_label = "Neutral"
+
+    return sentiment_label, sentiment
 
 
 def time_taken():
@@ -118,6 +136,30 @@ if submit_btn:
         sl.pyplot(fig)
         sl.markdown("""-----""")
         time_taken()
+    elif val == "Sentimental Analysis":
+        sl.write("## Sentimental Analysis:")
+        sl.write("##")
+        sentiment_label, sentiment_score = wiki_sentimental_analysis(url)
+        sl.write(f"**Sentiment status:** {sentiment_label}")
+        sl.write(f"**Sentiment value:** {sentiment_score}")
+        sl.write("##")
+        if sentiment_label == "Positive":
+            sl.image(
+                "sentimental_images\happy_face.png",
+                width=200,
+            )
+        elif sentiment_label == "Negative":
+            sl.image(
+                "sentimental_images\sad_face.png",
+                width=100,
+                use_column_width="always",
+            )
+        else:
+            sl.image(
+                "sentimental_images\ordinary_face.png",
+                width=100,
+                use_column_width="always",
+            )
     else:
         sl.write("## Wikipedia Text:")
         sl.write("##")
