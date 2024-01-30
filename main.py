@@ -10,6 +10,10 @@ import pandas as pd
 def show_warning(message):
     sl.warning(message)
 
+sl.set_page_config(
+    page_title="Wiki Scraper",
+    page_icon="🧱"
+)
 
 with sl.form("Wiki Search"):
     url = sl.text_input("Enter the Wikipedia page URL")
